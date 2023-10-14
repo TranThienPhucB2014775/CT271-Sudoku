@@ -11,6 +11,7 @@ GRAY = (192,192,192)
 icon_enable = (0,255,255)
 icon_disable = (192,192,192)
 color_button = (0,205,102)
+color_button_select = (250,128,114)
 color_button_disable = (139, 139 ,122)
 
 # Màu nền của button menu

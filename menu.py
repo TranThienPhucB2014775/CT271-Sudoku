@@ -6,7 +6,7 @@ import color_game
 import save_
 from path import Path
 
-duong_dan_goc = Path()
+dir = Path()
 
 class Menu():
     def __init__(self):
@@ -17,8 +17,8 @@ class Menu():
         self.new_game = False
         self.exit_game = False
         pygame.font.init()
-        self.screen_menu_background  = pygame.image.load(duong_dan_goc.get_path() + "/images/Designer.png")
-        self.font_Menu = pygame.font.Font(duong_dan_goc.get_path() +'/fonts/OpenSans-Regular.ttf',35)
+        self.screen_menu_background  = pygame.image.load(dir.get_path() + "/images/Designer.png")
+        self.font_Menu = pygame.font.Font(dir.get_path() +'/fonts/OpenSans-Regular.ttf',35)
         pygame.display.set_caption("Sudoku Game")
 
     def init_Menu(self):

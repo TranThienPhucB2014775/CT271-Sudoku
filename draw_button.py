@@ -1,10 +1,10 @@
 import pygame
 from path import Path
 
-duong_dan_goc = Path()
+dir = Path()
 
 pygame.font.init()
-font = pygame.font.Font(duong_dan_goc.get_path() + '/fonts/OpenSans-Regular.ttf',25)
+font = pygame.font.Font(dir.get_path() + '/fonts/OpenSans-Regular.ttf',25)
 
 #vẽ đường viền và chữ vào
 def Draw_button( button_ , screen, button_size, location, text, font_size, color_boder, color_text):

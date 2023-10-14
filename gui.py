@@ -11,7 +11,7 @@ import save_
 from sudoku import Sudoku
 from path import Path
 
-duong_dan_goc = Path()
+dir = Path()
 
 class Gui():
     def __init__(self, ):
@@ -20,6 +20,7 @@ class Gui():
         self.GRID_SIZE = self.CELL_SIZE * 9
         self.screen_Gui = pygame.display.set_mode(self.screen_Gui_size)
         self.running_Gui = False
+        self.running_Game = False
         self.selected_cell = None
         self.level = None
         self.check_all_answer = False
@@ -31,8 +32,8 @@ class Gui():
         self.back_menu = False
         self.fail = 0
         pygame.font.init()
-        self.screen_Gui_background  = pygame.image.load(duong_dan_goc.get_path() +"/images/Designer.png")
-        self.font_Gui = pygame.font.Font(duong_dan_goc.get_path() + '/fonts/OpenSans-Regular.ttf',35)
+        self.screen_Gui_background  = pygame.image.load(dir.get_path() +"/images/Designer.png")
+        self.font_Gui = pygame.font.Font(dir.get_path() + '/fonts/OpenSans-Regular.ttf',35)
         pygame.display.set_caption("Sudoku Game")
 
     def init_Gui(self):
@@ -43,6 +44,7 @@ class Gui():
         self.save_grid = 0
         self.save_game = False
         self.back_menu = False
+        self.running_Game = False
 
     #hàm trả về gui loop có đang chạy hay k
     def status_running(self):
@@ -133,30 +135,39 @@ class Gui():
         start_time = None
 
         if continue_game:
-            sudoku , sudoku_temp = save_.read_file_save()
+            self.running_Game = True
+            sudoku , sudoku_temp, self.level, self.fail = save_.read_file_save()
+            self.fail = int(self.fail)
             # sudoku_temp = copy.deepcopy(sudoku)
             sudoku_solved = copy.deepcopy(sudoku_temp)
             sudoku_solved.solve_sudoku()
-            self.level = 'playing'
-            self.fail = 5
         while self.running_Gui:
                 
             self.screen_Gui.blit(self.screen_Gui_background, (0, 0))
             #vẽ button chế độ chơi dễ
             button_easy = pygame.Rect( 10, 75 , 175, 50)
-            pygame.draw.rect(self.screen_Gui,color_game.color_button, button_easy)
+            if self.level == "easy":
+                pygame.draw.rect(self.screen_Gui,color_game.color_button_select, button_easy)
+            else:
+                pygame.draw.rect(self.screen_Gui,color_game.color_button, button_easy)
             #Vẽ chữ lên button dễ 
             draw_button.Draw_button( button_easy, self.screen_Gui, [175,50], [10, 75], 'Dễ', 60 , color_game.WHITE , color_game.WHITE )
 
             #vẽ button chế độ chơi trung bình
             button_balanced = pygame.Rect( 10, 135 , 175, 50)
-            pygame.draw.rect(self.screen_Gui,color_game.color_button, button_balanced)
+            if self.level == "balanced":
+                pygame.draw.rect(self.screen_Gui,color_game.color_button_select, button_balanced)
+            else:
+                pygame.draw.rect(self.screen_Gui,color_game.color_button, button_balanced)
             #Vẽ chữ lên button khó
             draw_button.Draw_button( button_balanced,self.screen_Gui, [175,50], [10, 135], 'Trung bình', 60 , color_game.WHITE , color_game.WHITE )
 
             #vẽ button chế độ chơi Khó
             button_hard = pygame.Rect( 10, 195 , 175, 50)
-            pygame.draw.rect(self.screen_Gui,color_game.color_button, button_hard)
+            if self.level == "hard":
+                pygame.draw.rect(self.screen_Gui,color_game.color_button_select, button_hard)
+            else: 
+                pygame.draw.rect(self.screen_Gui,color_game.color_button, button_hard)
             #Vẽ chữ lên button Khó
             draw_button.Draw_button( button_hard,self.screen_Gui, [175,50], [10, 195], 'Khó', 60 , color_game.WHITE , color_game.WHITE )
 
@@ -165,13 +176,13 @@ class Gui():
             pygame.draw.rect(self.screen_Gui,color_game.color_button, button_score_fail)
             #Vẽ chữ lên button khá Khó
             draw_button.Draw_button( button_score_fail,self.screen_Gui, [175,50], [10, 255],'Số lần sai: ' + str(5 - self.fail), 60 , color_game.WHITE , color_game.WHITE )
-
-            # #vẽ button chế độ chơi rất Khó
+            # vẽ button chế độ chơi rất Khó
             # button_very_hardly = pygame.Rect( 10, 315 , 175, 50)
             # pygame.draw.rect(self.screen_Gui,color_game.color_button, button_very_hardly)
             # #Vẽ chữ lên button rất Khó
             # draw_button.Draw_button( button_very_hardly,self.screen_Gui, [175,50], [10, 315], 'Rất Khó', 60 , color_game.WHITE , color_game.WHITE )
 
+            # vẽ trạng thái độ khó đang chơi
 
             #vẽ button Kiểm tra đáp án
             button_check_all = pygame.Rect( 665, 75 , 175, 50)
@@ -227,6 +238,7 @@ class Gui():
             #vẽ button về menu
             button_back_menu = pygame.Rect( 665, 375 , 175, 50)
             pygame.draw.rect(self.screen_Gui,color_game.color_button, button_back_menu)
+
             #Vẽ chữ lên button về menu
             draw_button.Draw_button( button_back_menu,self.screen_Gui, [175,50], [665, 375], 'Menu', 60 , color_game.WHITE , color_game.WHITE )
 
@@ -238,12 +250,15 @@ class Gui():
                     if button_easy.collidepoint(event.pos):
                         self.init_Gui()
                         self.level = 'easy'
+                        self.running_Game = True
                     elif button_balanced.collidepoint(event.pos):
                         self.init_Gui()
                         self.level = 'balanced'
+                        self.running_Game = True
                     elif button_hard.collidepoint(event.pos):
                         self.init_Gui()
                         self.level = 'hard'
+                        self.running_Game = True
                     # elif button_quite_hardly.collidepoint(event.pos):
                     #     self.init_Gui()
                     #     self.level = 'quite hardly'
@@ -293,34 +308,24 @@ class Gui():
                         elif event.key == pygame.K_BACKSPACE:
                             sudoku.get_Grid().add_value_grid(row, col , 0)
                     
-            if self.level == 'easy':
+            if self.level == 'easy' and self.running_Game is not False:
                 sudoku_different = Sudoku()
                 sudoku = sudoku_solved.ramdon_sudoku(self.level)
                 sudoku_temp = copy.deepcopy(sudoku)
                 self.fail = 5
-                self.level = 'playing'
-            if self.level == 'balanced':
+                self.running_Game = False
+            if self.level == 'balanced' and self.running_Game is not False:
                 sudoku_different = Sudoku()
                 sudoku = sudoku_solved.ramdon_sudoku(self.level)
                 sudoku_temp = copy.deepcopy(sudoku)
                 self.fail = 5
-                self.level = 'playing'
-            if self.level == 'hard':
+                self.running_Game = False
+            if self.level == 'hard' and self.running_Game is not False:
                 sudoku_different = Sudoku()
                 sudoku = sudoku_solved.ramdon_sudoku(self.level)
                 sudoku_temp = copy.deepcopy(sudoku)
                 self.fail = 5
-                self.level = 'playing'
-            # if self.level == 'quite hardly':
-            #     sudoku_different = Sudoku()
-            #     sudoku = sudoku_solved.ramdon_sudoku(self.level)
-            #     sudoku_temp = copy.deepcopy(sudoku)
-            #     self.level = 'playing'
-            # if self.level == 'very hardly':
-            #     sudoku_different = Sudoku()
-            #     sudoku = sudoku_solved.ramdon_sudoku(self.level)
-            #     sudoku_temp = copy.deepcopy(sudoku)
-            #     self.level = 'playing'
+                self.running_Game = False
             if self.check_all_answer and self.level is not None and not sudoku.is_sudoku_completed() and self.fail >= 0:
                 if sudoku.get_Grid().get_grid() ==  sudoku_solved.get_Grid().get_grid():
                     result = "Bạn đã giải ma trận thành công"
@@ -354,11 +359,11 @@ class Gui():
             if self.solve_answer and not sudoku.is_sudoku_completed():
                 result = "Ma trận đã được giải"
                 result_color = color_game.CHOCOLATE
-                sudoku = copy.deepcopy(sudoku_solved)
+                sudoku.solve_sudoku()
                 start_time = time.time()
 
             if self.save_game and self.level is not None and not sudoku.is_sudoku_completed():
-                save_.Save_Grid(sudoku.get_Grid(),sudoku_temp.get_Grid())
+                save_.Save_Grid(sudoku.get_Grid(),sudoku_temp.get_Grid(),self.level, self.fail)
                 result = 'Bạn đã lưu game thành công'
                 result_color = color_game.CHOCOLATE
                 self.save_game = False
@@ -389,7 +394,7 @@ class Gui():
             if self.fail < 0:
                 result_fail = self.font_Gui.render('Bạn đã sai quá 5 lần!', True, color_game.RED )
                 self.screen_Gui.blit(result_fail, (195, 28))
-            
+            #
             self.draw_board(sudoku_temp,195, 75)
             
             self.draw_board_different(sudoku_different,195,75)
