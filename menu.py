@@ -100,7 +100,7 @@ class Menu():
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if Continue_button.collidepoint(event.pos) and save_.check_save():
+                    if Continue_button.collidepoint(event.pos) and save.check_save():
                         self.init_Menu()
                         self.continue_game = True
                         self.running_menu = False
